@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orchard & Sun — Fresh Fruit, Delivered</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --leaf:#2f6b3d;
+    --leaf-dark:#234f2e;
+    --sun:#f4a11c;
+    --peach:#fff4e4;
+    --cream:#fcfaf4;
+    --ink:#20281f;
+    --muted:#5e6b59;
+    --line:#e7e1d3;
+    --shadow:0 18px 44px -24px rgba(40,60,30,.35);
+    --radius:20px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    color:var(--ink);
+    background:var(--cream);
+    line-height:1.6;
+  }
+  h1,h2,h3{font-family:'Fraunces',Georgia,serif;line-height:1.15;font-weight:600}
+  a{color:inherit}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+
+  /* Header */
+  header.site{
+    position:sticky;top:0;z-index:50;
+    background:rgba(252,250,244,.9);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-weight:700;font-size:1.35rem;color:var(--leaf-dark)}
+  .brand .dot{width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffd37a,var(--sun));display:grid;place-items:center;font-size:1.1rem}
+  .nav-right{display:flex;align-items:center;gap:12px}
+  .who{font-size:.9rem;color:var(--muted);display:none}
+  @media(min-width:640px){.who{display:inline}}
+
+  .btn{
+    font-family:inherit;font-size:1rem;font-weight:600;cursor:pointer;
+    border:none;border-radius:999px;padding:13px 22px;min-height:46px;
+    transition:transform .15s ease, box-shadow .2s ease, background .2s ease;
+  }
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{background:var(--leaf);color:#fff;box-shadow:0 10px 24px -12px rgba(47,107,61,.7)}
+  .btn-primary:hover{background:var(--leaf-dark)}
+  .btn-ghost{background:transparent;color:var(--leaf-dark);border:1.5px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--leaf);background:#f1f6ee}
+  .btn-sun{background:var(--sun);color:#3a2800}
+  .btn-sun:hover{background:#e0920f}
+
+  /* Hero */
+  .hero{position:relative;overflow:hidden}
+  .hero-inner{display:grid;gap:30px;padding:54px 0 48px}
+  @media(min-width:860px){.hero-inner{grid-template-columns:1.05fr .95fr;align-items:center;padding:78px 0 70px}}
+  .eyebrow{display:inline-block;background:var(--peach);color:#9a5e00;font-weight:600;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;padding:7px 14px;border-radius:999px;margin-bottom:18px}
+  .hero h1{font-size:clamp(2.3rem,6vw,3.6rem);color:var(--leaf-dark)}
+  .hero h1 em{font-style:italic;color:var(--sun)}
+  .hero p{margin:18px 0 26px;font-size:1.1rem;color:var(--muted);max-width:46ch}
+  .hero-cta{display:flex;flex-wrap:wrap;gap:12px}
+  .fruit-stage{
+    position:relative;aspect-ratio:1/.9;border-radius:28px;
+    background:linear-gradient(145deg,#fff7e7,#eaf3e6);
+    border:1px solid var(--line);box-shadow:var(--shadow);
+    display:grid;place-items:center;
+  }
+  .fruit-stage .big{font-size:clamp(5rem,20vw,10rem);filter:drop-shadow(0 16px 24px rgba(0,0,0,.14))}
+  .orbit{position:absolute;font-size:2.4rem;animation:float 6s ease-in-out infinite}
+  .orbit.o1{top:14%;left:12%;animation-delay:0s}
+  .orbit.o2{top:20%;right:14%;animation-delay:1.2s}
+  .orbit.o3{bottom:16%;left:18%;animation-delay:2.1s}
+  .orbit.o4{bottom:20%;right:16%;animation-delay:.6s}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+
+  /* Sections */
+  section{padding:56px 0}
+  .section-head{text-align:center;max-width:640px;margin:0 auto 38px}
+  .section-head h2{font-size:clamp(1.8rem,4.5vw,2.6rem);color:var(--leaf-dark)}
+  .section-head p{color:var(--muted);margin-top:10px}
+
+  /* Promises */
+  .promises{display:grid;gap:18px;grid-template-columns:1fr}
+  @media(min-width:720px){.promises{grid-template-columns:repeat(3,1fr)}}
+  .promise{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:26px;text-align:center}
+  .promise .ic{font-size:2rem}
+  .promise h3{font-size:1.2rem;margin:12px 0 6px}
+  .promise p{color:var(--muted);font-size:.95rem}
+
+  /* Shop */
+  .shop{background:linear-gradient(180deg,#f3f7ef,var(--cream))}
+  .locked-note{max-width:520px;margin:0 auto;text-align:center;background:#fff;border:1px dashed var(--leaf);border-radius:var(--radius);padding:30px}
+  .grid{display:grid;gap:22px;grid-template-columns:1fr}
+  @media(min-width:560px){.grid{grid-template-columns:1fr 1fr}}
+  @media(min-width:980px){.grid{grid-template-columns:repeat(4,1fr)}}
+  .card{
+    background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+    overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow);
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .card:hover{transform:translateY(-5px);box-shadow:0 26px 50px -24px rgba(40,60,30,.4)}
+  .card .thumb{aspect-ratio:4/3;display:grid;place-items:center;font-size:4.6rem}
+  .card .thumb.mango{background:linear-gradient(145deg,#ffe8b0,#ffcf6e)}
+  .card .thumb.orange{background:linear-gradient(145deg,#ffdca1,#ff9f45)}
+  .card .thumb.apple{background:linear-gradient(145deg,#ffd4d2,#ff8f88)}
+  .card .thumb.banana{background:linear-gradient(145deg,#fff4bf,#ffe066)}
+  .card .body{padding:20px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .card h3{font-size:1.3rem}
+  .card .desc{color:var(--muted);font-size:.92rem;flex:1}
+  .card .price{font-family:'Fraunces',serif;font-weight:700;font-size:1.25rem;color:var(--leaf-dark)}
+  .card .price small{font-weight:400;font-size:.8rem;color:var(--muted)}
+
+  /* factory-pay styling */
+  [data-factory-pay]{margin-top:4px}
+  .factory-pay-item{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+  .factory-pay-name{font-weight:600;font-size:.95rem}
+  .factory-pay-price{font-family:'Fraunces',serif;font-weight:700;color:var(--leaf-dark)}
+  .factory-pay-btn{
+    font-family:inherit;font-weight:600;cursor:pointer;border:none;border-radius:999px;
+    background:var(--sun);color:#3a2800;padding:11px 20px;min-height:44px;width:100%;
+    transition:background .2s ease;
+  }
+  .factory-pay-btn:hover{background:#e0920f}
+
+  /* How it works */
+  .how{background:#fff;border-top:1px solid var(--line)}
+  .steps{display:grid;gap:18px;grid-template-columns:1fr;counter-reset:s}
+  @media(min-width:720px){.steps{grid-template-columns:repeat(3,1fr)}}
+  .step{background:var(--cream);border:1px solid var(--line);border-radius:var(--radius);padding:24px;position:relative}
+  .step::before{counter-increment:s;content:counter(s);display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--leaf);color:#fff;font-family:'Fraunces',serif;font-weight:700;margin-bottom:12px}
+  .step h3{font-size:1.1rem;margin-bottom:4px}
+  .step p{color:var(--muted);font-size:.92rem}
+
+  /* footer */
+  footer{background:var(--leaf-dark);color:#dfe9da;padding:40px 0;text-align:center}
+  footer .brand{color:#fff;justify-content:center;margin-bottom:10px}
+  footer a{color:#ffe0a8}
+  .gap{display:inline-block;border:1px dashed var(--sun);background:#fff6e4;color:#9a5e00;padding:1px 8px;border-radius:6px;font-size:.85rem;font-weight:600}
+
+  /* Modal */
+  .overlay{position:fixed;inset:0;background:rgba(32,40,31,.55);backdrop-filter:blur(3px);display:none;place-items:center;z-index:100;padding:20px}
+  .overlay.show{display:grid}
+  .modal{background:var(--cream);border-radius:24px;max-width:420px;width:100%;padding:32px;box-shadow:0 30px 70px -20px rgba(0,0,0,.5);animation:pop .22s ease}
+  @keyframes pop{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+  .modal h2{font-size:1.6rem;color:var(--leaf-dark)}
+  .modal p.sub{color:var(--muted);margin:6px 0 20px;font-size:.95rem}
+  .tabs{display:flex;background:#eee6d6;border-radius:999px;padding:4px;margin-bottom:22px}
+  .tabs button{flex:1;border:none;background:transparent;font-family:inherit;font-weight:600;padding:10px;border-radius:999px;cursor:pointer;color:var(--muted)}
+  .tabs button.active{background:#fff;color:var(--leaf-dark);box-shadow:0 2px 6px rgba(0,0,0,.08)}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-size:.85rem;font-weight:600;margin-bottom:6px}
+  .field input{width:100%;padding:13px 15px;border:1.5px solid var(--line);border-radius:12px;font-family:inherit;font-size:1rem;background:#fff}
+  .field input:focus{outline:none;border-color:var(--leaf)}
+  .consent{display:flex;gap:10px;align-items:flex-start;font-size:.85rem;color:var(--muted);margin-bottom:18px}
+  .consent input{margin-top:3px}
+  .msg{font-size:.88rem;padding:10px 12px;border-radius:10px;margin-bottom:14px;display:none}
+  .msg.err{display:block;background:#fde8e6;color:#b23a2d}
+  .msg.ok{display:block;background:#e4f3e0;color:#2f6b3d}
+  .modal .btn-primary{width:100%}
+  .small-link{display:block;text-align:center;margin-top:14px;font-size:.85rem;color:var(--muted);background:none;border:none;cursor:pointer;width:100%}
+  .note{font-size:.78rem;color:var(--muted);margin-top:16px;text-align:center}
+
+  .saver{position:fixed;bottom:18px;right:18px;background:var(--leaf-dark);color:#fff;padding:9px 16px;border-radius:999px;font-size:.85rem;opacity:0;transform:translateY(10px);transition:all .3s ease;z-index:120}
+  .saver.show{opacity:1;transform:translateY(0)}
+  .hidden{display:none!important}
+</style>
+<script id="factory-store-sdk">
+window.factory=(function(){
+var K="d626cad0-d49c-4f4a-8bf2-80a2261bf49d",U="https://canvbkibjgcnqowjtarf.supabase.co/functions/v1/app-market",A="sb_publishable_sMTQKIeFgT1vwjHnU7Gexg_8CCmhtxs";
+function call(b){b.appKey=K;return fetch(U,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+A},body:JSON.stringify(b)}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||("store "+r.status));return d;});});}
+var S={
+put:function(c,i,d){return call({op:"put",collection:c,id:String(i),data:d}).then(function(x){return x.doc?x.doc.data:null;});},
+get:function(c,i){return call({op:"get",collection:c,id:String(i)}).then(function(x){return x.doc?x.doc.data:null;});},
+list:function(c){return call({op:"list",collection:c}).then(function(x){return x.docs.map(function(d){return d.data;});});},
+remove:function(c,i){return call({op:"delete",collection:c,id:String(i)}).then(function(){return true;});},
+unlock:function(code){return call({op:"redeem",code:String(code)}).then(function(x){try{localStorage.setItem("factory_access",x.status);}catch(e){}return x.status;});},
+access:function(){try{return localStorage.getItem("factory_access")||"none";}catch(e){return "none";}}
+};
+var _c=null;try{var h=(location.hash||"").match(/factory_code=([a-z0-9-]+)/i);_c=h?h[1]:localStorage.getItem("factory_code");if(h){history.replaceState(null,"",location.pathname+location.search);}}catch(e){}
+var F={put:S.put,get:S.get,list:S.list,remove:S.remove,unlock:S.unlock,access:S.access};
+F.ready=_c?S.unlock(_c).then(function(s){try{if(s!=="invalid")localStorage.setItem("factory_code",_c);}catch(e){}return s;}).catch(function(){return S.access();}):Promise.resolve(S.access());
+return F;})();
+</script>
+<script id="factory-pay-sdk">
+(function(){
+var R="make-an-app-uc4a",U="https://canvbkibjgcnqowjtarf.supabase.co/functions/v1/app-pay",P=String.fromCharCode(163);
+function call(b){return fetch(U,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||("pay "+r.status));return d;});});}
+function money(p){return P+(Number(p)/100).toFixed(2);}
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=String(x);return e;}
+function say(text,good){var b=document.getElementById("factory-pay-banner");if(!b){b=el("div");b.id="factory-pay-banner";b.setAttribute("role","status");b.style.cssText="position:fixed;left:12px;right:12px;bottom:12px;z-index:2147483000;max-width:520px;margin:0 auto;padding:14px 16px;border-radius:12px;font:600 15px/1.4 system-ui,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.35);cursor:pointer;";b.onclick=function(){b.remove();};document.body.appendChild(b);}b.style.background=good?"#0f5132":"#332b00";b.style.color="#fff";b.textContent=text;}
+var _p=null;function products(){if(!_p)_p=call({op:"products",repo:R});return _p;}
+var C=U.replace(/app-pay$/,"app-crypto-desk");function ccall(b){return fetch(C,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b)}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||("pay "+r.status));return d;});});}
+var _o=null;function offer(){if(!_o)_o=ccall({op:"offer",repo:R}).catch(function(){return {active:false,coins:[]};});return _o;}
+function cpanel(x,row,o){var old=row.querySelector(".factory-pay-cpanel");if(old){old.remove();return;}var p=el("div","factory-pay-cpanel");p.style.cssText="flex-basis:100%;padding:10px;border:1px solid currentColor;border-radius:.6em;font-size:.95em;line-height:1.5;";
+var sel=el("select");o.coins.forEach(function(c){var op=el("option","",c.label);op.value=c.coin;sel.appendChild(op);});var em=el("input");em.type="email";em.placeholder="Your email (so the seller can reach you)";em.style.cssText="margin:6px 0;width:100%;box-sizing:border-box;padding:.5em;";
+var go=el("button","factory-pay-btn","SHOW THE AMOUNT");go.type="button";var out=el("div");out.style.marginTop="8px";if(o.notice){var n=el("div","",o.notice);n.style.cssText="opacity:.85;margin-bottom:6px;";p.appendChild(n);}
+p.appendChild(el("div","","Pay "+money(x.price_pence)+" with crypto, straight to the seller's wallet:"));p.appendChild(sel);p.appendChild(em);p.appendChild(go);p.appendChild(out);row.appendChild(p);
+go.onclick=function(){go.disabled=true;out.textContent="Checking the rate with two sources…";ccall({op:"quote",product_id:x.id,coin:sel.value,email:em.value}).then(function(q){var od=q.order;out.textContent="";
+out.appendChild(el("div","","Send exactly"));var amt=el("div","",od.amount+" "+od.coin);amt.style.cssText="font-size:1.4em;font-weight:800;font-family:ui-monospace,Menlo,monospace;";out.appendChild(amt);out.appendChild(el("div","","to this "+od.label+" address of the seller:"));var ad=el("div","",od.address);ad.style.cssText="word-break:break-all;font-family:ui-monospace,Menlo,monospace;padding:.4em;border:1px dashed currentColor;border-radius:.4em;";out.appendChild(ad);
+var cp=el("button","factory-pay-btn","COPY ADDRESS");cp.type="button";cp.onclick=function(){try{navigator.clipboard.writeText(od.address);cp.textContent="COPIED";}catch(e){}};var ca=el("button","factory-pay-btn","COPY AMOUNT");ca.type="button";ca.onclick=function(){try{navigator.clipboard.writeText(od.amount);ca.textContent="COPIED";}catch(e){}};var bar=el("div");bar.style.cssText="display:flex;gap:8px;flex-wrap:wrap;margin:6px 0;";bar.appendChild(cp);bar.appendChild(ca);if(od.uri){var w=document.createElement("a");w.href=od.uri;w.className="factory-pay-btn";w.textContent="OPEN IN WALLET";w.style.textDecoration="none";bar.appendChild(w);}out.appendChild(bar);
+var st=el("div","",q.by_hand?"Waiting for your payment. For this coin the seller checks their wallet and confirms by hand.":"Waiting for your payment. This page watches the ledger for you. Amount valid for "+q.minutes+" minutes.");out.appendChild(st);
+var t=setInterval(function(){ccall({op:"status",id:od.id}).then(function(r){var s=r.order||{};if(s.status==="paid"){clearInterval(t);st.textContent="✓ Paid, thank you. The seller has been told.";say("Paid, thank you: "+x.name+" "+money(x.price_pence),true);try{window.dispatchEvent(new CustomEvent("factory:paid",{detail:{product:x.name,amount_pence:x.price_pence,crypto:true}}));}catch(e){}}
+else if(s.status==="confirmed")st.textContent="Confirmed on the ledger. Finishing…";else if(s.status==="seen")st.textContent="Payment seen on the ledger ("+s.confirmations+" confirmation"+(s.confirmations===1?"":"s")+"). Waiting for the network to confirm it.";else if(s.status==="short")st.textContent="Received "+s.received+" "+s.coin+", less than the amount due. Please send the difference to the same address.";else if(s.status==="expired"){clearInterval(t);st.textContent="This amount has expired. Press SHOW THE AMOUNT again. Coins already sent are still counted when they arrive.";}}).catch(function(){});},20000);
+}).catch(function(e){go.disabled=false;out.textContent=e.message||"Could not get an amount. Nothing is owed.";});};}
+function buy(id,btn){if(btn){btn.disabled=true;}return call({op:"checkout",product_id:id,return_url:location.origin+location.pathname}).then(function(d){location.href=d.url;}).catch(function(e){if(btn){btn.disabled=false;}say(e.message||"Payment could not be started. Nothing was taken.",false);});}
+function mount(host){if(!host||host.getAttribute("data-factory-pay-done"))return Promise.resolve();host.setAttribute("data-factory-pay-done","1");var want=(host.getAttribute("data-factory-pay")||"").trim().toLowerCase();
+return Promise.all([products(),offer()]).then(function(pr){var d=pr[0],o=pr[1]||{};var cryptoOn=!!(o.active&&o.coins&&o.coins.length);var list=(d.products||[]).filter(function(x){return !want||String(x.name).trim().toLowerCase()===want;});host.textContent="";
+list.forEach(function(x){var row=el("div","factory-pay-item");row.appendChild(el("span","factory-pay-name",x.name));if(x.description)row.appendChild(el("span","factory-pay-desc",x.description));row.appendChild(el("span","factory-pay-price",money(x.price_pence)));
+if(d.open&&d.seller_ready){var b=el("button","factory-pay-btn","Pay "+money(x.price_pence));b.type="button";b.onclick=function(){buy(x.id,b);};row.appendChild(b);}else if(!cryptoOn){row.appendChild(el("span","factory-pay-soon","Payments open here soon"));}
+if(cryptoOn){var cb=el("button","factory-pay-btn factory-pay-crypto","Pay with crypto");cb.type="button";cb.onclick=function(){cpanel(x,row,o);};row.appendChild(cb);}
+host.appendChild(row);});}).catch(function(){host.textContent="";});}
+function mountAll(){var n=document.querySelectorAll("[data-factory-pay]");for(var i=0;i<n.length;i++)mount(n[i]);}
+function back(){var m=(location.search||"").match(/[?&]paid=([A-Za-z0-9_]+)/);if(!m)return;var v=m[1];try{history.replaceState(null,"",location.pathname+location.hash);}catch(e){}
+if(v==="no"){say("Payment cancelled. Nothing was taken.",false);return;}if(v.indexOf("cs_")!==0)return;var tries=0;
+(function ask(){call({op:"order",session_id:v}).then(function(d){var o=d.order||{};if(o.status==="paid"){say("Paid, thank you: "+o.product_name+" "+money(o.gross_pence),true);try{window.dispatchEvent(new CustomEvent("factory:paid",{detail:{product:o.product_name,amount_pence:o.gross_pence}}));}catch(e){}}
+else if(o.status==="pending"&&++tries<8){setTimeout(ask,2000);}else if(o.status==="pending"){say("Thank you. Your payment is being confirmed.",true);}}).catch(function(){if(++tries<4)setTimeout(ask,2000);});})();}
+var st=document.createElement("style");st.textContent=":where(.factory-pay-item){display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin:8px 0}:where(.factory-pay-name){font-weight:600}:where(.factory-pay-desc){flex-basis:100%;opacity:.8;font-size:.92em}:where(.factory-pay-price){margin-left:auto}:where(.factory-pay-btn){cursor:pointer;padding:.6em 1.1em;border-radius:.6em;border:0;font:inherit;font-weight:700}:where(.factory-pay-soon){opacity:.7;font-size:.9em}";document.head.appendChild(st);
+window.factory=window.factory||{};window.factory.pay={products:products,buy:buy,mount:mount};
+function go(){back();mountAll();}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",go);else go();
+})();
+</script>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap nav">
+    <div class="brand"><span class="dot">🍋</span> Orchard &amp; Sun</div>
+    <div class="nav-right">
+      <span class="who" id="whoLabel"></span>
+      <button class="btn btn-ghost" id="authBtn">Sign in</button>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="wrap hero-inner">
+    <div>
+      <span class="eyebrow">Picked ripe · Delivered fresh</span>
+      <h1>Sunshine fruit, <em>straight</em> to your kitchen.</h1>
+      <p>Hand-selected mangoes, oranges, apples and bananas in generous 1&nbsp;kg batches. Simple, honest, and always fresh — create an account and order in seconds.</p>
+      <div class="hero-cta">
+        <a href="#shop" class="btn btn-primary">Shop fresh fruit</a>
+        <button class="btn btn-ghost" id="heroAuth">Create account</button>
+      </div>
+    </div>
+    <div class="fruit-stage" aria-hidden="true">
+      <span class="big">🥭</span>
+      <span class="orbit o1">🍊</span>
+      <span class="orbit o2">🍎</span>
+      <span class="orbit o3">🍌</span>
+      <span class="orbit o4">🍃</span>
+    </div>
+  </div>
+</div>
+
+<!-- PROMISES -->
+<section>
+  <div class="wrap">
+    <div class="promises">
+      <div class="promise"><div class="ic">🌱</div><h3>Ripe &amp; natural</h3><p>Chosen at peak ripeness, never force-ripened. Flavour you can taste.</p></div>
+      <div class="promise"><div class="ic">⚖️</div><h3>Honest 1&nbsp;kg batches</h3><p>Every fruit sold in a full kilogram batch — one simple, fair price.</p></div>
+      <div class="promise"><div class="ic">💚</div><h3>Kind to all</h3><p>A warm little shop for every kitchen, every family, every day.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SHOP -->
+<section class="shop" id="shop">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Today's fresh picks</h2>
+      <p>Each batch is a full 1&nbsp;kg for <strong>£8</strong>. Pay securely by card at checkout.</p>
+    </div>
+
+    <!-- shown when logged out -->
+    <div class="locked-note" id="shopLocked">
+      <h3 style="color:var(--leaf-dark);font-size:1.3rem;margin-bottom:8px">Sign in to order</h3>
+      <p style="color:var(--muted);margin-bottom:18px">Create a free account (or log back in) to buy your fruit. It only takes a moment.</p>
+      <button class="btn btn-primary" id="lockedAuth">Create account / Sign in</button>
+    </div>
+
+    <!-- shown when logged in -->
+    <div class="grid hidden" id="shopGrid">
+      <div class="card">
+        <div class="thumb mango">🥭</div>
+        <div class="body">
+          <h3>Mango</h3>
+          <p class="desc">Soft, golden and intensely sweet — pure tropical sunshine in a 1&nbsp;kg batch.</p>
+          <div class="price">£8 <small>/ 1&nbsp;kg batch</small></div>
+          <div data-factory-pay="Mango 1kg"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb orange">🍊</div>
+        <div class="body">
+          <h3>Orange</h3>
+          <p class="desc">Juicy, zingy and full of brightness. Perfect for fresh juice or a healthy snack.</p>
+          <div class="price">£8 <small>/ 1&nbsp;kg batch</small></div>
+          <div data-factory-pay="Orange 1kg"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb apple">🍎</div>
+        <div class="body">
+          <h3>Apple</h3>
+          <p class="desc">Crisp, crunchy and refreshing. A lunchbox classic that never disappoints.</p>
+          <div class="price">£8 <small>/ 1&nbsp;kg batch</small></div>
+          <div data-factory-pay="Apple 1kg"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="thumb banana">🍌</div>
+        <div class="body">
+          <h3>Banana</h3>
+          <p class="desc">Smooth, creamy and naturally energising. Great for smoothies and baking.</p>
+          <div class="price">£8 <small>/ 1&nbsp;kg batch</small></div>
+          <div data-factory-pay="Banana 1kg"></div>
+        </div>
+      </div>
+    </div>
+    <p class="note" id="payNote" style="display:none">Card payment opens here once the shop owner has listed these items in their Factory account. We never see or store your card details.</p>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>How it works</h2>
+      <p>From account to kitchen in three easy steps.</p>
+    </div>
+    <div class="steps">
+      <div class="step"><h3>Create your account</h3><p>Pick a username and password. They're saved securely so you can log back in any time — even after closing the app.</p></div>
+      <div class="step"><h3>Choose your fruit</h3><p>Browse the four fresh picks and add any 1&nbsp;kg batch for £8. Order as many batches as you like.</p></div>
+      <div class="step"><h3>Pay by card</h3><p>Checkout is handled securely by The Factory. Your card details are never seen or stored by this app.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="brand"><span class="dot">🍋</span> Orchard &amp; Sun</div>
+    <p>Fresh fruit, delivered with care.</p>
+    <p style="margin-top:10px">Questions? Call us on <span class="gap">[ADD YOUR PHONE NUMBER]</span> · <span class="gap">[ADD YOUR EMAIL]</span></p>
+    <p style="margin-top:6px">Find us at <span class="gap">[ADD YOUR ADDRESS]</span> · Open <span class="gap">[ADD YOUR OPENING HOURS]</span></p>
+  </div>
+</footer>
+
+<!-- AUTH MODAL -->
+<div class="overlay" id="overlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <h2 id="modalTitle">Welcome back</h2>
+    <p class="sub" id="modalSub">Sign in to order your fresh fruit.</p>
+    <div class="tabs">
+      <button id="tabLogin" class="active">Sign in</button>
+      <button id="tabSignup">Create account</button>
+    </div>
+    <div class="msg" id="authMsg"></div>
+    <form id="authForm">
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" autocomplete="current-password" required minlength="4">
+      </div>
+      <label class="consent" id="consentRow" style="display:none">
+        <input type="checkbox" id="consent">
+        <span>Tick to receive tasty offers and fruity news from Orchard &amp; Sun.</span>
+      </label>
+      <button type="submit" class="btn btn-primary" id="authSubmit">Sign in</button>
+    </form>
+    <button class="small-link" id="closeModal">Maybe later</button>
+    <p class="note">Passwords are stored securely as a one-way hash — we can never read your password.</p>
+  </div>
+</div>
+
+<div class="saver" id="saver">Saved ✓</div>
+
+<script>
+/* ---------- tiny helpers ---------- */
+const $ = s => document.querySelector(s);
+const overlay = $('#overlay');
+const saver = $('#saver');
+let mode = 'login';
+let session = null;
+
+function showSaver(txt='Saved ✓'){ saver.textContent = txt; saver.classList.add('show'); setTimeout(()=>saver.classList.remove('show'),1400); }
+
+async function hash(str){
+  const data = new TextEncoder().encode(str + '::orchard-salt');
+  const buf = await crypto.subtle.digest('SHA-256', data);
+  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+/* ---------- storage (factory with localStorage fallback) ---------- */
+const hasFactory = typeof window.factory !== 'undefined';
+async function fput(c,id,doc){ if(hasFactory) return factory.put(c,id,doc); localStorage.setItem('fx_'+c+'_'+id, JSON.stringify(doc)); }
+async function fget(c,id){
+  if(hasFactory) return factory.get(c,id);
+  const v = localStorage.getItem('fx_'+c+'_'+id); return v?JSON.parse(v):null;
+}
+
+/* ---------- modal control ---------- */
+function openModal(which='login'){ setMode(which); clearMsg(); overlay.classList.add('show'); $('#username').focus(); }
+function closeModal(){ overlay.classList.remove('show'); }
+function setMode(which){
+  mode = which;
+  const login = which==='login';
+  $('#tabLogin').classList.toggle('active', login);
+  $('#tabSignup').classList.toggle('active', !login);
+  $('#modalTitle').textContent = login ? 'Welcome back' : 'Create your account';
+  $('#modalSub').textContent = login ? 'Sign in to order your fresh fruit.' : 'Pick a username and password — you can log back in any time.';
+  $('#authSubmit').textContent = login ? 'Sign in' : 'Create account';
+  $('#consentRow').style.display = login ? 'none' : 'flex';
+  $('#password').setAttribute('autocomplete', login ? 'current-password' : 'new-password');
+}
+function clearMsg(){ const m=$('#authMsg'); m.className='msg'; m.textContent=''; }
+function showMsg(txt, ok=false){ const m=$('#authMsg'); m.className='msg '+(ok?'ok':'err'); m.textContent=txt; }
+
+$('#tabLogin').onclick = ()=>{ setMode('login'); clearMsg(); };
+$('#tabSignup').onclick = ()=>{ setMode('signup'); clearMsg(); };
+$('#closeModal').onclick = closeModal;
+overlay.addEventListener('click', e=>{ if(e.target===overlay) closeModal(); });
+
+/* ---------- auth submit ---------- */
+$('#authForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  clearMsg();
+  const username = $('#username').value.trim().toLowerCase();
+  const password = $('#password').value;
+  if(username.length < 3){ showMsg('Username must be at least 3 characters.'); return; }
+  if(password.length < 4){ showMsg('Password must be at least 4 characters.'); return; }
+
+  $('#authSubmit').disabled = true;
+  $('#authSubmit').textContent = 'Please wait…';
+  try{
+    const existing = await fget('accounts', username);
+    const ph = await hash(password);
+
+    if(mode==='signup'){
+      if(existing){ showMsg('That username is already taken — try signing in instead.'); return; }
+      const consent = $('#consent').checked;
+      const doc = { username, passwordHash: ph, consent, created: new Date().toISOString() };
+      await fput('accounts', username, doc);
+      // store consented contact for owner marketing desk
+      if(consent){
+        const cid = String(Date.now());
+        await fput('contacts', cid, { name: username, email:'', phone:'', consent:true, date:new Date().toISOString() });
+      }
+      loginSuccess(username);
+      showSaver('Account created ✓');
+    } else {
+      if(!existing){ showMsg('No account with that username. Create one first.'); return; }
+      if(existing.passwordHash !== ph){ showMsg('Incorrect password. Please try again.'); return; }
+      loginSuccess(username);
+    }
+  }catch(err){
+    showMsg('Something went wrong. Please check your connection and try again.');
+  }finally{
+    $('#authSubmit').disabled = false;
+    setMode(mode);
+  }
+});
+
+function loginSuccess(username){
+  session = username;
+  localStorage.setItem('orchard_session', username);
+  closeModal();
+  renderAuthState();
+}
+
+function logout(){
+  session = null;
+  localStorage.removeItem('orchard_session');
+  renderAuthState();
+}
+
+/* ---------- render logged-in / out state ---------- */
+function renderAuthState(){
+  const loggedIn = !!session;
+  $('#shopLocked').classList.toggle('hidden', loggedIn);
+  $('#shopGrid').classList.toggle('hidden', !loggedIn);
+  $('#payNote').style.display = loggedIn ? 'block' : 'none';
+  $('#whoLabel').textContent = loggedIn ? ('Hi, '+session) : '';
+  const btn = $('#authBtn');
+  if(loggedIn){ btn.textContent = 'Sign out'; btn.onclick = logout; }
+  else { btn.textContent = 'Sign in'; btn.onclick = ()=>openModal('login'); }
+}
+
+/* ---------- wiring ---------- */
+$('#heroAuth').onclick = ()=> session ? document.getElementById('shop').scrollIntoView() : openModal('signup');
+$('#lockedAuth').onclick = ()=> openModal('login');
+
+window.addEventListener('factory:paid', (e)=>{
+  showSaver('Payment received — thank you! 🍃');
+});
+
+/* ---------- boot ---------- */
+(function init(){
+  const saved = localStorage.getItem('orchard_session');
+  if(saved) session = saved;
+  renderAuthState();
+})();
+</script>
+<div id="factory-provenance" style="padding:14px 16px;text-align:center;font:11px/1.7 system-ui,sans-serif;color:#888;opacity:.85;">&#9874; Built with <a href="https://thefactory.refereeinnovations.com" style="color:#888;">The Factory</a> using third-party AI tools &#183; the app owner is responsible for its content &#183; Standard: UK law, aligned with the UN Universal Declaration of Human Rights &#183; <a href="https://thefactory.refereeinnovations.com/terms.html" style="color:#888;">Terms</a></div>
+</body>
+</html>

@@ -118,6 +118,7 @@
   .card .desc{color:var(--muted);font-size:.92rem;flex:1}
   .card .price{font-family:'Fraunces',serif;font-weight:700;font-size:1.25rem;color:var(--leaf-dark)}
   .card .price small{font-weight:400;font-size:.8rem;color:var(--muted)}
+  .place-order-btn{width:100%;margin-top:4px}
 
   /* factory-pay styling */
   [data-factory-pay]{margin-top:4px}
@@ -298,6 +299,7 @@ function go(){back();mountAll();}if(document.readyState==="loading")document.add
           <p class="desc">Soft, golden and intensely sweet — pure tropical sunshine in a 1&nbsp;kg batch.</p>
           <div class="price">£8 <small>/ 1&nbsp;kg batch</small></div>
           <div data-factory-pay="Mango 1kg"></div>
+          <button class="btn btn-primary place-order-btn" data-fruit="Mango 1kg">Place order</button>
         </div>
       </div>
       <div class="card">
@@ -307,6 +309,7 @@ function go(){back();mountAll();}if(document.readyState==="loading")document.add
           <p class="desc">Juicy, zingy and full of brightness. Perfect for fresh juice or a healthy snack.</p>
           <div class="price">£8 <small>/ 1&nbsp;kg batch</small></div>
           <div data-factory-pay="Orange 1kg"></div>
+          <button class="btn btn-primary place-order-btn" data-fruit="Orange 1kg">Place order</button>
         </div>
       </div>
       <div class="card">
@@ -316,6 +319,7 @@ function go(){back();mountAll();}if(document.readyState==="loading")document.add
           <p class="desc">Crisp, crunchy and refreshing. A lunchbox classic that never disappoints.</p>
           <div class="price">£8 <small>/ 1&nbsp;kg batch</small></div>
           <div data-factory-pay="Apple 1kg"></div>
+          <button class="btn btn-primary place-order-btn" data-fruit="Apple 1kg">Place order</button>
         </div>
       </div>
       <div class="card">
@@ -325,6 +329,7 @@ function go(){back();mountAll();}if(document.readyState==="loading")document.add
           <p class="desc">Smooth, creamy and naturally energising. Great for smoothies and baking.</p>
           <div class="price">£8 <small>/ 1&nbsp;kg batch</small></div>
           <div data-factory-pay="Banana 1kg"></div>
+          <button class="btn btn-primary place-order-btn" data-fruit="Banana 1kg">Place order</button>
         </div>
       </div>
     </div>
@@ -383,6 +388,32 @@ function go(){back();mountAll();}if(document.readyState==="loading")document.add
     </form>
     <button class="small-link" id="closeModal">Maybe later</button>
     <p class="note">Passwords are stored securely as a one-way hash — we can never read your password.</p>
+  </div>
+</div>
+
+<!-- ORDER MODAL -->
+<div class="overlay" id="orderOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="orderTitle">
+    <h2 id="orderTitle">Place your order</h2>
+    <p class="sub" id="orderSub">Enter your delivery details below.</p>
+    <div class="msg" id="orderMsg"></div>
+    <form id="orderForm">
+      <div class="field">
+        <label for="orderName">Full name</label>
+        <input type="text" id="orderName" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="orderPhone">Phone number</label>
+        <input type="tel" id="orderPhone" autocomplete="tel" required>
+      </div>
+      <div class="field">
+        <label for="orderAddress">Delivery address</label>
+        <input type="text" id="orderAddress" autocomplete="street-address" required>
+      </div>
+      <button type="submit" class="btn btn-primary" id="orderSubmit">Submit order</button>
+    </form>
+    <button class="small-link" id="closeOrder">Cancel</button>
+    <p class="note">Pay securely by card using the <strong>Pay</strong> button above — The Factory handles payment and we never see or store your card details. Your order details will be emailed to the shop owner for review.</p>
   </div>
 </div>
 
@@ -508,6 +539,72 @@ function logout(){
   localStorage.removeItem('orchard_session');
   renderAuthState();
 }
+
+/* ---------- order flow ---------- */
+const ORDER_EMAIL = 'eliaselbou@gmail.com';
+let orderFruit = null;
+const orderOverlay = $('#orderOverlay');
+
+function clearOrderMsg(){ const m=$('#orderMsg'); m.className='msg'; m.textContent=''; }
+function showOrderMsg(txt, ok=false){ const m=$('#orderMsg'); m.className='msg '+(ok?'ok':'err'); m.textContent=txt; }
+
+function openOrder(fruit){
+  orderFruit = fruit;
+  clearOrderMsg();
+  $('#orderSub').textContent = 'Ordering ' + fruit + ' (£8 / 1 kg batch). Enter your delivery details below.';
+  orderOverlay.classList.add('show');
+  $('#orderName').focus();
+}
+function closeOrder(){ orderOverlay.classList.remove('show'); }
+
+document.querySelectorAll('.place-order-btn').forEach(b=>{
+  b.onclick = ()=> openOrder(b.getAttribute('data-fruit'));
+});
+$('#closeOrder').onclick = closeOrder;
+orderOverlay.addEventListener('click', e=>{ if(e.target===orderOverlay) closeOrder(); });
+
+$('#orderForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  clearOrderMsg();
+  const name = $('#orderName').value.trim();
+  const phone = $('#orderPhone').value.trim();
+  const address = $('#orderAddress').value.trim();
+  if(!name || !phone || !address){ showOrderMsg('Please fill in all the fields.'); return; }
+
+  $('#orderSubmit').disabled = true;
+  $('#orderSubmit').textContent = 'Sending…';
+
+  const oid = String(Date.now());
+  const order = {
+    id: oid,
+    fruit: orderFruit,
+    name, phone, address,
+    account: session || 'guest',
+    date: new Date().toISOString()
+  };
+
+  try{ await fput('orders', oid, order); }catch(err){ /* non-critical — still send email */ }
+
+  const subject = 'New Orchard & Sun order: ' + orderFruit;
+  const body =
+    'A new order has been placed on Orchard & Sun.\n\n' +
+    'Fruit: ' + orderFruit + ' (£8 / 1 kg batch)\n' +
+    'Name: ' + name + '\n' +
+    'Phone: ' + phone + '\n' +
+    'Delivery address: ' + address + '\n' +
+    'Account: ' + (session || 'guest') + '\n' +
+    'Date: ' + order.date + '\n';
+
+  window.location.href = 'mailto:' + ORDER_EMAIL +
+    '?subject=' + encodeURIComponent(subject) +
+    '&body=' + encodeURIComponent(body);
+
+  showOrderMsg('Order received! Your email app will open so your order can be sent to the shop. Please pay securely using the Pay button on the product.', true);
+  showSaver('Order placed ✓');
+  $('#orderSubmit').disabled = false;
+  $('#orderSubmit').textContent = 'Submit order';
+  $('#orderForm').reset();
+});
 
 /* ---------- render logged-in / out state ---------- */
 function renderAuthState(){

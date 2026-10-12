@@ -283,14 +283,14 @@ function go(){back();mountAll();}if(document.readyState==="loading")document.add
     </div>
 
     <!-- shown when logged out -->
-    <div class="locked-note" id="shopLocked">
+    <div class="locked-note hidden" id="shopLocked">
       <h3 style="color:var(--leaf-dark);font-size:1.3rem;margin-bottom:8px">Sign in to order</h3>
       <p style="color:var(--muted);margin-bottom:18px">Create a free account (or log back in) to buy your fruit. It only takes a moment.</p>
       <button class="btn btn-primary" id="lockedAuth">Create account / Sign in</button>
     </div>
 
-    <!-- shown when logged in -->
-    <div class="grid hidden" id="shopGrid">
+    <!-- always visible -->
+    <div class="grid" id="shopGrid">
       <div class="card">
         <div class="thumb mango">🥭</div>
         <div class="body">
@@ -406,10 +406,30 @@ async function hash(str){
 
 /* ---------- storage (factory with localStorage fallback) ---------- */
 const hasFactory = typeof window.factory !== 'undefined';
-async function fput(c,id,doc){ if(hasFactory) return factory.put(c,id,doc); localStorage.setItem('fx_'+c+'_'+id, JSON.stringify(doc)); }
+async function fput(c,id,doc){
+  if(hasFactory){
+    try{
+      const r = await factory.put(c,id,doc);
+      // keep a local mirror so the account survives any later outage
+      try{ localStorage.setItem('fx_'+c+'_'+id, JSON.stringify(doc)); }catch(e){}
+      return r;
+    }catch(e){ /* network/store failed — fall back to local storage below */ }
+  }
+  localStorage.setItem('fx_'+c+'_'+id, JSON.stringify(doc));
+  return doc;
+}
 async function fget(c,id){
-  if(hasFactory) return factory.get(c,id);
-  const v = localStorage.getItem('fx_'+c+'_'+id); return v?JSON.parse(v):null;
+  if(hasFactory){
+    try{
+      const r = await factory.get(c,id);
+      if(r) return r;
+      // not found remotely — check the local mirror as a fallback
+      const v = localStorage.getItem('fx_'+c+'_'+id);
+      return v?JSON.parse(v):null;
+    }catch(e){ /* network/store failed — fall back to local storage below */ }
+  }
+  const v = localStorage.getItem('fx_'+c+'_'+id);
+  return v?JSON.parse(v):null;
 }
 
 /* ---------- modal control ---------- */
@@ -457,7 +477,9 @@ $('#authForm').addEventListener('submit', async (e)=>{
       // store consented contact for owner marketing desk
       if(consent){
         const cid = String(Date.now());
-        await fput('contacts', cid, { name: username, email:'', phone:'', consent:true, date:new Date().toISOString() });
+        try{
+          await fput('contacts', cid, { name: username, email:'', phone:'', consent:true, date:new Date().toISOString() });
+        }catch(e){ /* non-critical — don't block sign-up */ }
       }
       loginSuccess(username);
       showSaver('Account created ✓');
@@ -467,7 +489,7 @@ $('#authForm').addEventListener('submit', async (e)=>{
       loginSuccess(username);
     }
   }catch(err){
-    showMsg('Something went wrong. Please check your connection and try again.');
+    showMsg('Something went wrong. Please try again in a moment.');
   }finally{
     $('#authSubmit').disabled = false;
     setMode(mode);
@@ -490,9 +512,10 @@ function logout(){
 /* ---------- render logged-in / out state ---------- */
 function renderAuthState(){
   const loggedIn = !!session;
-  $('#shopLocked').classList.toggle('hidden', loggedIn);
-  $('#shopGrid').classList.toggle('hidden', !loggedIn);
-  $('#payNote').style.display = loggedIn ? 'block' : 'none';
+  // Fruit picks are always visible — no sign-in required to browse.
+  $('#shopLocked').classList.add('hidden');
+  $('#shopGrid').classList.remove('hidden');
+  $('#payNote').style.display = 'block';
   $('#whoLabel').textContent = loggedIn ? ('Hi, '+session) : '';
   const btn = $('#authBtn');
   if(loggedIn){ btn.textContent = 'Sign out'; btn.onclick = logout; }
